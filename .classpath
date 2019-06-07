@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/RXTXcomm.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang3-3.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/jogg.jar"/>
+	<classpathentry kind="lib" path="lib/jorbis.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl.jar"/>
+	<classpathentry kind="lib" path="lib/natives-linux.jar"/>
+	<classpathentry kind="lib" path="lib/natives-mac.jar"/>
+	<classpathentry kind="lib" path="lib/natives-windows.jar"/>
+	<classpathentry kind="lib" path="lib/slick-util.jar"/>
+	<classpathentry kind="lib" path="lib/slick.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/GLX"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
