@@ -1,4 +1,4 @@
-package com.arisux.sbsat;
+package com.asx.sbsat;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,33 +17,48 @@ import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 
-public class SBSATMain implements SerialPortEventListener
+public class SBSAT implements SerialPortEventListener
 {
-    private static final File    LWJGL_NATIVES = new File("lib/natives");
-    public static final File     RESOURCES     = new File("src/main/resources");
+    public static final File     RESOURCES = new File("src/main/resources");
 
+    private static SBSAT          instance;
     private static UserInterface ui;
-    private static boolean       appRunning    = true;
     private static Thread        uiThread;
+    private static boolean       appRunning;
 
     private SerialPort           serialPort;
-    private volatile String      portId        = null;
+    private volatile String      portId    = null;
     private long                 conStartTimeStamp;
     private long                 timeSinceLastRead;
     private BufferedReader       input;
     private OutputStream         output;
-    private static final int     TIME_OUT      = 500;
-    private static final int     DATA_RATE     = 115200;
+    private static final int     TIME_OUT  = 500;
+    private static final int     DATA_RATE = 115200;
     private volatile boolean     canStart;
     private String               lineBuffer;
-    private ArrayList<String>    buffer        = new ArrayList<String>();
+    private ArrayList<String>    buffer    = new ArrayList<String>();
     private boolean              continuousModeEnabled;
     private boolean              isConnected;
     private AnalyzerDevice       connectedDevice;
 
-    private static SBSATMain     instance;
+    public SBSAT()
+    {
+        instance = this;
+        
+        uiThread = new Thread() {
+            @Override
+            public void run()
+            {
+                ui = new UserInterface();
+                ui.init();
+            }
+        };
 
-    public static SBSATMain instance()
+        uiThread.start();
+        appRunning = true;
+    }
+
+    public static SBSAT instance()
     {
         return instance;
     }
@@ -72,52 +87,6 @@ public class SBSATMain implements SerialPortEventListener
         public static final Sprite cellWarning        = Sprite.load(new ResourceLocation(RESOURCES, "cell_warning.png"));
     }
 
-    public long getConStartTimeStamp()
-    {
-        return conStartTimeStamp;
-    }
-
-    public void setConStartTimeStamp(long conStartTimeStamp)
-    {
-        this.conStartTimeStamp = conStartTimeStamp;
-    }
-
-    public static void main(String[] args)
-    {
-        System.out.println("LWJGL Natives Path: " + LWJGL_NATIVES.getAbsolutePath());
-        System.setProperty("org.lwjgl.librarypath", LWJGL_NATIVES.getAbsolutePath());
-        System.out.println(Properties.NAME);
-        System.out.println("Version " + Properties.VERSION);
-
-        instance = new SBSATMain();
-
-        uiThread = new Thread() {
-            @Override
-            public void run()
-            {
-                ui = new UserInterface();
-                ui.init();
-            }
-        };
-
-        uiThread.start();
-        appRunning = true;
-
-        while (appRunning)
-        {
-            SBSATMain.instance().update();
-
-            try
-            {
-                Thread.sleep(50);
-            }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public void update()
     {
         long time = System.currentTimeMillis();
@@ -132,7 +101,7 @@ public class SBSATMain implements SerialPortEventListener
 
         if (timeSinceLastRead > 0 && time - timeSinceLastRead > 5000)
         {
-            SBSATMain.instance().serialPort.close();
+            SBSAT.instance().serialPort.close();
             this.isConnected = false;
             getUserInterface().reset();
         }
@@ -144,12 +113,27 @@ public class SBSATMain implements SerialPortEventListener
         }
     }
 
+    public static UserInterface getUserInterface()
+    {
+        return ui;
+    }
+
     public synchronized void close()
     {
         if (serialPort != null)
         {
             serialPort.removeEventListener();
             serialPort.close();
+
+            try
+            {
+                input.close();
+                output.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -166,7 +150,7 @@ public class SBSATMain implements SerialPortEventListener
                     output.write("model".getBytes());
                 }
 
-                SBSATMain.setInfoText("Reading Parameters...");
+                SBSAT.setInfoText("Reading Parameters...");
             }
 
             if (this.connectedDevice != null)
@@ -196,7 +180,7 @@ public class SBSATMain implements SerialPortEventListener
                     val = val.replace(parameter + " ", "");
                     val = val.trim();
                     this.connectedDevice.setRevision(Integer.parseInt(val));
-                    SBSATMain.setInfoText(String.format("%s R%s", this.connectedDevice.getModel().toUpperCase(), this.connectedDevice.getRevision()));
+                    SBSAT.setInfoText(String.format("%s R%s", this.connectedDevice.getModel().toUpperCase(), this.connectedDevice.getRevision()));
                     output.write("mode simulate".getBytes());
                 }
 
@@ -273,7 +257,7 @@ public class SBSATMain implements SerialPortEventListener
         try
         {
             System.out.println("Connecting to " + this.getPortId());
-            SBSATMain.setInfoText("Connecting to " + this.getPortId() + "...");
+            SBSAT.setInfoText("Connecting to " + this.getPortId() + "...");
             port = CommPortIdentifier.getPortIdentifier(this.getPortId());
         }
         catch (NoSuchPortException e1)
@@ -284,7 +268,7 @@ public class SBSATMain implements SerialPortEventListener
         if (port == null)
         {
             System.out.println("Could not find COM port.");
-            SBSATMain.getUserInterface().reset();
+            SBSAT.getUserInterface().reset();
             this.isConnected = false;
             return;
         }
@@ -299,7 +283,7 @@ public class SBSATMain implements SerialPortEventListener
 
             serialPort.addEventListener(this);
             serialPort.notifyOnDataAvailable(true);
-            SBSATMain.setInfoText("Connected to " + this.getPortId());
+            SBSAT.setInfoText("Connected to " + this.getPortId());
             this.isConnected = true;
             System.out.println("Connected to serial line on " + portId);
             conStartTimeStamp = System.currentTimeMillis();
@@ -309,17 +293,8 @@ public class SBSATMain implements SerialPortEventListener
         {
             System.err.println(e.toString());
             this.isConnected = false;
+            terminate();
         }
-    }
-
-    public static boolean isAppRunning()
-    {
-        return appRunning;
-    }
-
-    public static UserInterface getUserInterface()
-    {
-        return ui;
     }
 
     public String getPortId()
@@ -361,10 +336,20 @@ public class SBSATMain implements SerialPortEventListener
     {
         return buffer;
     }
-    
+
     public AnalyzerDevice getConnectedDevice()
     {
         return connectedDevice;
+    }
+
+    public long getConStartTimeStamp()
+    {
+        return conStartTimeStamp;
+    }
+
+    public void setConStartTimeStamp(long conStartTimeStamp)
+    {
+        this.conStartTimeStamp = conStartTimeStamp;
     }
 
     public synchronized static void setInfoText(String text)
@@ -387,6 +372,11 @@ public class SBSATMain implements SerialPortEventListener
             FormSBSATBase sbsatForm = (FormSBSATBase) activeForm;
             sbsatForm.getStatus().setText(text);
         }
+    }
+
+    public static boolean isAppRunning()
+    {
+        return appRunning;
     }
 
     public static void terminate()

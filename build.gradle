@@ -4,7 +4,7 @@ repositories {
     mavenCentral()
 }
 
-mainClassName = 'com.arisux.sbsat.SBSATMain'
+mainClassName = 'com.asx.sbsat.LaunchWrapper'
 
 dependencies {
     compile files("lib\\commons-lang3-3.2.1.jar")

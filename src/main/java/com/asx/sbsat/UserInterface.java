@@ -1,4 +1,4 @@
-package com.arisux.sbsat;
+package com.asx.sbsat;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
@@ -18,7 +18,7 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.util.ResourceLoader;
 
-import com.arisux.sbsat.SBSATMain.Properties;
+import com.asx.sbsat.SBSAT.Properties;
 
 public class UserInterface
 {
@@ -82,8 +82,8 @@ public class UserInterface
             Display.setDisplayMode(DASHBOARD);
 
             ByteBuffer[] list = new ByteBuffer[2];
-            list[0] = Sprite.toByteBuffer(ImageIO.read(new File(SBSATMain.RESOURCES, "16.png")));
-            list[1] = Sprite.toByteBuffer(ImageIO.read(new File(SBSATMain.RESOURCES, "32.png")));
+            list[0] = Sprite.toByteBuffer(ImageIO.read(new File(SBSAT.RESOURCES, "16.png")));
+            list[1] = Sprite.toByteBuffer(ImageIO.read(new File(SBSAT.RESOURCES, "32.png")));
             Display.setIcon(list);
 
             Display.create();
@@ -120,7 +120,7 @@ public class UserInterface
         GL11.glLoadIdentity();
         GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
 
-        while (!Display.isCloseRequested() && SBSATMain.isAppRunning())
+        while (!Display.isCloseRequested() && SBSAT.isAppRunning())
         {
             if (Display.wasResized())
             {
@@ -156,7 +156,7 @@ public class UserInterface
             Display.sync(60);
         }
         
-        SBSATMain.terminate();
+        SBSAT.terminate();
         Display.destroy();
         AL.destroy();
         System.exit(0);

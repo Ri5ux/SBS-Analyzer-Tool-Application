@@ -1,4 +1,4 @@
-package com.arisux.sbsat;
+package com.asx.sbsat;
 
 import java.util.ArrayList;
 
@@ -50,7 +50,7 @@ public class AnalyzerDevice
     public void parseBatteryData()
     {
         // FormBatteryOverview.instance().updateConsole(buffer.toString());
-        ArrayList<String> buffer = SBSATMain.instance().getBuffer();
+        ArrayList<String> buffer = SBSAT.instance().getBuffer();
 
         int idxStart = buffer.lastIndexOf("================================");
         int idxEnd = buffer.size() - 1;
@@ -72,7 +72,7 @@ public class AnalyzerDevice
                 sbObject = battery;
                 System.out.println("Received data from battery(" + sbObject.getSerial() + ")");
 
-                SBSATMain.instance().heartbeat();
+                SBSAT.instance().heartbeat();
             }
         }
     }

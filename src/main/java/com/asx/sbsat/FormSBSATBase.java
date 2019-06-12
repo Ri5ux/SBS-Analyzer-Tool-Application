@@ -1,4 +1,4 @@
-package com.arisux.sbsat;
+package com.asx.sbsat;
 
 import java.awt.Font;
 
@@ -9,7 +9,7 @@ import org.asx.glx.gui.forms.GuiForm;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.Color;
 
-import com.arisux.sbsat.SBSATMain.Sprites;
+import com.asx.sbsat.SBSAT.Sprites;
 
 public abstract class FormSBSATBase extends GuiForm
 {
@@ -47,7 +47,7 @@ public abstract class FormSBSATBase extends GuiForm
     @Override
     public void render()
     {
-        if (SBSATMain.getUserInterface().getPanel().getActiveForm() == this)
+        if (SBSAT.getUserInterface().getPanel().getActiveForm() == this)
         {
             GuiElement.renderColoredRect(0, 0, Display.getWidth(), Display.getHeight(), BACKGROUND_COLOR);
             super.render();

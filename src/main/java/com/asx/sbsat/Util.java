@@ -1,4 +1,4 @@
-package com.arisux.sbsat;
+package com.asx.sbsat;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

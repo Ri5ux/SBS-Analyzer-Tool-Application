@@ -1,4 +1,4 @@
-package com.arisux.sbsat;
+package com.asx.sbsat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,13 +9,13 @@ import org.asx.glx.gui.elements.GuiText;
 import org.asx.glx.opengl.Sprite;
 import org.newdawn.slick.Color;
 
-import com.arisux.sbsat.SBSATMain.Sprites;
+import com.asx.sbsat.SBSAT.Sprites;
 
 public class SmartBattery
 {
     private static final Logger logger          = Logger.getLogger("SBSAT");
     private ArrayList<Cell>     cells           = new ArrayList<Cell>();
-    private Sprite              statusIndicator = SBSATMain.Sprites.batteryUnspecified;
+    private Sprite              statusIndicator = SBSAT.Sprites.batteryUnspecified;
     // private boolean canRenderMeter;
 
     /** Parsed values **/
@@ -112,20 +112,20 @@ public class SmartBattery
 
             if (markers.contains(Status.OVERTEMP_ALARM) || markers.contains(Status.OVERCHARGE_ALARM))
             {
-                this.setCellStatusIndicator(SBSATMain.Sprites.cellWarning);
+                this.setCellStatusIndicator(SBSAT.Sprites.cellWarning);
             }
             else if (this.getVoltage() == 0 && this.getBattery().getSerial().isEmpty())
             {
-                this.setCellStatusIndicator(SBSATMain.Sprites.cellUnavailable);
+                this.setCellStatusIndicator(SBSAT.Sprites.cellUnavailable);
             }
             else if (this.getChargePercent() >= -20)
             {
-                this.setCellStatusIndicator(SBSATMain.Sprites.cellEmpty);
+                this.setCellStatusIndicator(SBSAT.Sprites.cellEmpty);
                 // this.canRenderMeter = true;
             }
             else
             {
-                this.setCellStatusIndicator(SBSATMain.Sprites.cellDefective);
+                this.setCellStatusIndicator(SBSAT.Sprites.cellDefective);
             }
         }
 
@@ -457,24 +457,24 @@ public class SmartBattery
 
         if (markers.contains(Status.OVERTEMP_ALARM) || markers.contains(Status.OVERCHARGE_ALARM))
         {
-            this.setStatusIndicator(SBSATMain.Sprites.batteryWarning);
+            this.setStatusIndicator(SBSAT.Sprites.batteryWarning);
         }
         else if (this.getVoltage() == 0 && this.getSerial().isEmpty())
         {
-            this.setStatusIndicator(SBSATMain.Sprites.batteryUnavailable);
+            this.setStatusIndicator(SBSAT.Sprites.batteryUnavailable);
         }
         else if (markers.contains(Status.CHARGED))
         {
-            this.setStatusIndicator(SBSATMain.Sprites.batteryCharging);
+            this.setStatusIndicator(SBSAT.Sprites.batteryCharging);
         }
         else if (this.getCharge() >= -20)
         {
-            this.setStatusIndicator(SBSATMain.Sprites.batteryEmpty);
+            this.setStatusIndicator(SBSAT.Sprites.batteryEmpty);
             // this.canRenderMeter = true;
         }
         else
         {
-            this.setStatusIndicator(SBSATMain.Sprites.batteryDefective);
+            this.setStatusIndicator(SBSAT.Sprites.batteryDefective);
         }
     }
     

@@ -1,4 +1,4 @@
-package com.arisux.sbsat;
+package com.asx.sbsat;
 
 import org.asx.glx.gui.GuiPanel;
 import org.asx.glx.gui.themes.Theme;

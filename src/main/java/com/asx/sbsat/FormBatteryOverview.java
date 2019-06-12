@@ -1,4 +1,4 @@
-package com.arisux.sbsat;
+package com.asx.sbsat;
 
 import java.awt.Font;
 
@@ -10,7 +10,7 @@ import org.asx.glx.opengl.Sprite;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.Color;
 
-import com.arisux.sbsat.SmartBattery.Cell;
+import com.asx.sbsat.SmartBattery.Cell;
 
 public class FormBatteryOverview extends FormSBSATBase
 {
@@ -86,7 +86,7 @@ public class FormBatteryOverview extends FormSBSATBase
     {
         super.render();
         
-        AnalyzerDevice device = SBSATMain.instance().getConnectedDevice();
+        AnalyzerDevice device = SBSAT.instance().getConnectedDevice();
 
         if (device != null)
         {
@@ -129,7 +129,7 @@ public class FormBatteryOverview extends FormSBSATBase
 
                     cell.updateCellSprite();
 
-                    if (cell.getCellStatusIndicator() == SBSATMain.Sprites.cellEmpty)
+                    if (cell.getCellStatusIndicator() == SBSAT.Sprites.cellEmpty)
                     {
                         if (cell.getChargePercent() > 0)
                         {
@@ -245,13 +245,13 @@ public class FormBatteryOverview extends FormSBSATBase
                     console.render(cellPadding * 2, consoleStartY);
                 }
             }
-            else if (!SBSATMain.instance().isConnected())
+            else if (!SBSAT.instance().isConnected())
             {
-                SBSATMain.setStatusText("Connecting...");
+                SBSAT.setStatusText("Connecting...");
             }
-            else if (SBSATMain.instance().isConnected())
+            else if (SBSAT.instance().isConnected())
             {
-                SBSATMain.setStatusText("Waiting for data...");
+                SBSAT.setStatusText("Waiting for data...");
             }
         }
     }

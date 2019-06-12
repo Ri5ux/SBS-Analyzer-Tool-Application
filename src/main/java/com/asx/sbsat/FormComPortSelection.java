@@ -1,4 +1,4 @@
-package com.arisux.sbsat;
+package com.asx.sbsat;
 
 import java.util.ArrayList;
 
@@ -12,8 +12,8 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 
-import com.arisux.sbsat.SBSATMain.Sprites;
-import com.arisux.sbsat.Util.ComPortEntry;
+import com.asx.sbsat.SBSAT.Sprites;
+import com.asx.sbsat.Util.ComPortEntry;
 
 public class FormComPortSelection extends GuiForm
 {
@@ -62,12 +62,12 @@ public class FormComPortSelection extends GuiForm
                         String[] values = button.getText().getString().split(" : ");
                         String portName = values[0];
 
-                        SBSATMain.getUserInterface().setDisplayMode(UserInterface.DISPLAY_MODE_854_480);
+                        SBSAT.getUserInterface().setDisplayMode(UserInterface.DISPLAY_MODE_854_480);
 
                         System.out.println("Selected " + portName);
-                        SBSATMain.instance().setPortId(portName);
-                        SBSATMain.getUserInterface().getPanel().setActiveForm(FormBatteryOverview.instance());
-                        SBSATMain.instance().setCanStartSerialConnection(true);
+                        SBSAT.instance().setPortId(portName);
+                        SBSAT.getUserInterface().getPanel().setActiveForm(FormBatteryOverview.instance());
+                        SBSAT.instance().setCanStartSerialConnection(true);
 
                     }
                 }
@@ -87,7 +87,7 @@ public class FormComPortSelection extends GuiForm
         INSTANCE = this;
         this.textLoading = new GuiText(this, FormSBSATBase.FONT_SEGOEUI_PLAIN_14, "Loading COM Ports...");
         this.textCopyright = new GuiText(this, FormSBSATBase.FONT_SEGOEUI_PLAIN_14, "Copyright (C) 2019 ASX Electronics");
-        this.textVersion = new GuiText(this, FormSBSATBase.FONT_SEGOEUI_PLAIN_14, String.format("Version %s", SBSATMain.Properties.VERSION));
+        this.textVersion = new GuiText(this, FormSBSATBase.FONT_SEGOEUI_PLAIN_14, String.format("Version %s", SBSAT.Properties.VERSION));
     }
 
     @SuppressWarnings("unchecked")
@@ -155,7 +155,7 @@ public class FormComPortSelection extends GuiForm
 //        GuiElement.renderColoredRect(0, 0, Display.getWidth(), headHeight, FormSBSATBase.HEADER_COLOR);
 //        GuiElement.renderColoredRect(0, headHeight - 1, Display.getWidth(), 1, FormSBSATBase.TRANSPARENT_HIGHLIGHT);
 
-        if (SBSATMain.getUserInterface().getTicks() % (60 * 1) == 0)
+        if (SBSAT.getUserInterface().getTicks() % (60 * 1) == 0)
         {
             ArrayList<ComPortEntry> newComPortList = Util.getListOfComPorts();
 
