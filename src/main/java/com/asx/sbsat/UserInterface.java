@@ -29,6 +29,8 @@ public class UserInterface
     private volatile DisplayMode    displayMode;
     private GuiMain                 panel;
     private long                    ticks;
+    private boolean                 resizable;
+    private boolean                 resized;
 
     public UserInterface()
     {
@@ -122,7 +124,7 @@ public class UserInterface
 
         while (!Display.isCloseRequested() && SBSAT.isAppRunning())
         {
-            if (Display.wasResized())
+            if (Display.wasResized() || resized)
             {
                 GL11.glMatrixMode(GL11.GL_PROJECTION);
                 GL11.glLoadIdentity();
@@ -130,24 +132,22 @@ public class UserInterface
                 GL11.glMatrixMode(GL11.GL_MODELVIEW);
                 GL11.glLoadIdentity();
                 GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
+                resized = false;
             }
-            
+
             if (this.displayMode != null)
             {
                 try
                 {
-                    if (this.displayMode != DASHBOARD)
-                    {
-                        Display.setResizable(true);
-                    }
-                    
                     Display.setDisplayMode(this.displayMode);
+                    Display.setResizable(this.resizable);
                 }
                 catch (LWJGLException e)
                 {
                     e.printStackTrace();
                 }
                 this.displayMode = null;
+                this.resized = true;
             }
 
             this.render();
@@ -155,7 +155,7 @@ public class UserInterface
             Display.update();
             Display.sync(60);
         }
-        
+
         SBSAT.terminate();
         Display.destroy();
         AL.destroy();
@@ -200,6 +200,16 @@ public class UserInterface
     public synchronized void setDisplayMode(DisplayMode displayMode)
     {
         this.displayMode = displayMode;
+        this.resized = true;
+
+        if (displayMode == DASHBOARD)
+        {
+            this.resizable = false;
+        }
+        else
+        {
+            this.resizable = true;
+        }
     }
 
     public void reset()

@@ -1,5 +1,12 @@
 package com.asx.sbsat;
 
+import static com.asx.sbsat.Colors.COLOR_NEON_GREEN;
+import static com.asx.sbsat.Colors.COMPORT_BUTTON_COLOR;
+import static com.asx.sbsat.Colors.COMPORT_BUTTON_COLOR_HOVER;
+import static com.asx.sbsat.Colors.HEADER_COLOR;
+import static com.asx.sbsat.Colors.TRANSPARENT_HIGHLIGHT;
+import static com.asx.sbsat.Fonts.FONT_SEGOEUI_PLAIN_14;
+
 import java.util.ArrayList;
 
 import org.asx.glx.gui.GuiPanel;
@@ -12,7 +19,6 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 
-import com.asx.sbsat.SBSAT.Sprites;
 import com.asx.sbsat.Util.ComPortEntry;
 
 public class FormComPortSelection extends GuiForm
@@ -28,28 +34,25 @@ public class FormComPortSelection extends GuiForm
     private GuiText textCopyright;
     private GuiText textVersion;
 
-    private int maxScroll;
-    private int headHeight = 65;
-    private int footHeight = 30;
+    private int     maxScroll;
+    private int     headHeight = 65;
+    private int     footHeight = 30;
 
     public static class GuiButtonComPort extends GuiButton
     {
-        private static final Color COLOR       = new Color(0.25F, 0.25F, 0.25F, 0.2F);
-        private static final Color COLOR_HOVER = new Color(0x20AAAAAA);
-
         private ComPortEntry       com;
 
         public GuiButtonComPort(GuiForm form, int x, int y, int width, int height, ComPortEntry com)
         {
-            super(form, x, y, width, height, new GuiText(form, FormSBSATBase.FONT_SEGOEUI_PLAIN_14, String.format("%s : %s", com.getPort(), com.getFriendlyName())));
+            super(form, x, y, width, height, new GuiText(form, FONT_SEGOEUI_PLAIN_14, String.format("%s : %s", com.getPort(), com.getFriendlyName())));
 
             this.com = com;
-            this.setColor(COLOR, COLOR_HOVER);
+            this.setColor(COMPORT_BUTTON_COLOR, COMPORT_BUTTON_COLOR_HOVER);
             this.getText().setColor(Color.gray, Color.gray);
 
             if (com.getFriendlyName().contains("Silab"))
             {
-                text.setColor(FormSBSATBase.COLOR_NEON_GREEN, FormSBSATBase.COLOR_NEON_GREEN);
+                text.setColor(COLOR_NEON_GREEN, COLOR_NEON_GREEN);
             }
 
             this.setClickAction(new IAction<GuiElement>() {
@@ -65,9 +68,8 @@ public class FormComPortSelection extends GuiForm
                         SBSAT.getUserInterface().setDisplayMode(UserInterface.DISPLAY_MODE_854_480);
 
                         System.out.println("Selected " + portName);
-                        SBSAT.instance().setPortId(portName);
+                        SBSAT.instance().createDevice(portName);
                         SBSAT.getUserInterface().getPanel().setActiveForm(FormBatteryOverview.instance());
-                        SBSAT.instance().setCanStartSerialConnection(true);
 
                     }
                 }
@@ -85,9 +87,9 @@ public class FormComPortSelection extends GuiForm
         super(panel, parentForm);
 
         INSTANCE = this;
-        this.textLoading = new GuiText(this, FormSBSATBase.FONT_SEGOEUI_PLAIN_14, "Loading COM Ports...");
-        this.textCopyright = new GuiText(this, FormSBSATBase.FONT_SEGOEUI_PLAIN_14, "Copyright (C) 2019 ASX Electronics");
-        this.textVersion = new GuiText(this, FormSBSATBase.FONT_SEGOEUI_PLAIN_14, String.format("Version %s", SBSAT.Properties.VERSION));
+        this.textLoading = new GuiText(this, FONT_SEGOEUI_PLAIN_14, "Loading COM Ports...");
+        this.textCopyright = new GuiText(this, FONT_SEGOEUI_PLAIN_14, "Copyright (C) 2019 ASX Electronics");
+        this.textVersion = new GuiText(this, FONT_SEGOEUI_PLAIN_14, String.format("Version %s", SBSAT.Properties.VERSION));
     }
 
     @SuppressWarnings("unchecked")
@@ -150,28 +152,29 @@ public class FormComPortSelection extends GuiForm
     {
         super.render();
 
-        GL11.glEnd();//Why does this resolve font rendering on initial load?
+        GL11.glEnd();// Why does this resolve font rendering on initial load?
 
-//        GuiElement.renderColoredRect(0, 0, Display.getWidth(), headHeight, FormSBSATBase.HEADER_COLOR);
-//        GuiElement.renderColoredRect(0, headHeight - 1, Display.getWidth(), 1, FormSBSATBase.TRANSPARENT_HIGHLIGHT);
+        // GuiElement.renderColoredRect(0, 0, Display.getWidth(), headHeight, FormSBSATBase.HEADER_COLOR);
+        // GuiElement.renderColoredRect(0, headHeight - 1, Display.getWidth(), 1,
+        // FormSBSATBase.TRANSPARENT_HIGHLIGHT);
 
         if (SBSAT.getUserInterface().getTicks() % (60 * 1) == 0)
         {
             if (SBSAT.instance().isCompatibleWithJavaVersion())
             {
-            ArrayList<ComPortEntry> newComPortList = Util.getListOfComPorts();
+                ArrayList<ComPortEntry> newComPortList = Util.getListOfComPorts();
 
-            if (!areCOMPortListsIdentical(loadedComPorts, newComPortList))
-            {
-                loadedComPorts = newComPortList;
-                this.clearComButtonList();
-
-                for (ComPortEntry com : newComPortList)
+                if (!areCOMPortListsIdentical(loadedComPorts, newComPortList))
                 {
-                    GuiButtonComPort button = new GuiButtonComPort(this, -1000, -1000, 200, 25, com);
-                    this.add(button);
+                    loadedComPorts = newComPortList;
+                    this.clearComButtonList();
+
+                    for (ComPortEntry com : newComPortList)
+                    {
+                        GuiButtonComPort button = new GuiButtonComPort(this, -1000, -1000, 200, 25, com);
+                        this.add(button);
+                    }
                 }
-            }
             }
             else
             {
@@ -194,7 +197,7 @@ public class FormComPortSelection extends GuiForm
 
                     b.setWidth(Display.getWidth() - (2));
                     b.render(1, headHeight + 1 + elementHeightOffset + scrollOffset);
-                    
+
                     maxScroll = maxScroll + elementHeight;
                     i++;
                 }
@@ -205,14 +208,14 @@ public class FormComPortSelection extends GuiForm
             textLoading.render(Display.getWidth() / 2 - (textLoading.getWidth() / 2), Display.getHeight() / 2);
         }
 
-        GuiElement.renderColoredRect(0, 0, Display.getWidth(), headHeight, FormSBSATBase.HEADER_COLOR);
-        GuiElement.renderColoredRect(0, headHeight - 1, Display.getWidth(), 1, FormSBSATBase.TRANSPARENT_HIGHLIGHT);
+        GuiElement.renderColoredRect(0, 0, Display.getWidth(), headHeight, HEADER_COLOR);
+        GuiElement.renderColoredRect(0, headHeight - 1, Display.getWidth(), 1, TRANSPARENT_HIGHLIGHT);
         Sprite logo = Sprites.logoWide;
         logo.draw(Display.getWidth() / 2 - (int) (logo.getWidth()) / 2, 0, 1F);
         this.textVersion.render(Display.getWidth() / 2 - this.textVersion.getWidth() / 2, 40);
-        
-        GuiElement.renderColoredRect(0, Display.getHeight() - footHeight, Display.getWidth(), footHeight, FormSBSATBase.HEADER_COLOR);
-        GuiElement.renderColoredRect(0, Display.getHeight() - footHeight, Display.getWidth(), 1, FormSBSATBase.TRANSPARENT_HIGHLIGHT);
+
+        GuiElement.renderColoredRect(0, Display.getHeight() - footHeight, Display.getWidth(), footHeight, HEADER_COLOR);
+        GuiElement.renderColoredRect(0, Display.getHeight() - footHeight, Display.getWidth(), 1, TRANSPARENT_HIGHLIGHT);
         this.textCopyright.render(Display.getWidth() / 2 - (this.textCopyright.getWidth() / 2), Display.getHeight() - (25));
     }
 

@@ -1,5 +1,8 @@
 package com.asx.sbsat;
 
+import static com.asx.sbsat.Fonts.FONT_SEGOEUI_PLAIN_14;
+import static com.asx.sbsat.Fonts.FONT_SEGOEUI_PLAIN_20;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,13 +12,12 @@ import org.asx.glx.gui.elements.GuiText;
 import org.asx.glx.opengl.Sprite;
 import org.newdawn.slick.Color;
 
-import com.asx.sbsat.SBSAT.Sprites;
-
 public class SmartBattery
 {
     private static final Logger logger          = Logger.getLogger("SBSAT");
     private ArrayList<Cell>     cells           = new ArrayList<Cell>();
-    private Sprite              statusIndicator = SBSAT.Sprites.batteryUnspecified;
+    private Sprite              statusIndicator = Sprites.batteryUnspecified;
+    private BatteryFormData     formData;
     // private boolean canRenderMeter;
 
     /** Parsed values **/
@@ -95,11 +97,11 @@ public class SmartBattery
             this.battery = battery;
             this.index = index;
             FormBatteryOverview f = FormBatteryOverview.instance();
-            this.labelIndex = new GuiText(f, FormSBSATBase.FONT_SEGOEUI_PLAIN_14, "Cell " + String.valueOf(index));
-            this.labelVoltage = new GuiText(f, FormSBSATBase.FONT_SEGOEUI_PLAIN_14, "0V");
-            this.labelVoltageMin = new GuiText(f, FormSBSATBase.FONT_SEGOEUI_PLAIN_14, "0V");
-            this.labelVoltageMax = new GuiText(f, FormSBSATBase.FONT_SEGOEUI_PLAIN_14, "0V");
-            this.labelCharge = new GuiText(f, FormSBSATBase.FONT_SEGOEUI_PLAIN_20, "0%");
+            this.labelIndex = new GuiText(f, FONT_SEGOEUI_PLAIN_14, "Cell " + String.valueOf(index));
+            this.labelVoltage = new GuiText(f, FONT_SEGOEUI_PLAIN_14, "0V");
+            this.labelVoltageMin = new GuiText(f, FONT_SEGOEUI_PLAIN_14, "0V");
+            this.labelVoltageMax = new GuiText(f, FONT_SEGOEUI_PLAIN_14, "0V");
+            this.labelCharge = new GuiText(f, FONT_SEGOEUI_PLAIN_20, "0%");
             this.labelCharge.setApplyShadow(true);
             this.labelCharge.setColor(COLOR_LABEL, COLOR_LABEL);
             this.cellStatusIndicator = Sprites.batteryEmpty;
@@ -112,20 +114,20 @@ public class SmartBattery
 
             if (markers.contains(Status.OVERTEMP_ALARM) || markers.contains(Status.OVERCHARGE_ALARM))
             {
-                this.setCellStatusIndicator(SBSAT.Sprites.cellWarning);
+                this.setCellStatusIndicator(Sprites.cellWarning);
             }
             else if (this.getVoltage() == 0 && this.getBattery().getSerial().isEmpty())
             {
-                this.setCellStatusIndicator(SBSAT.Sprites.cellUnavailable);
+                this.setCellStatusIndicator(Sprites.cellUnavailable);
             }
             else if (this.getChargePercent() >= -20)
             {
-                this.setCellStatusIndicator(SBSAT.Sprites.cellEmpty);
+                this.setCellStatusIndicator(Sprites.cellEmpty);
                 // this.canRenderMeter = true;
             }
             else
             {
-                this.setCellStatusIndicator(SBSAT.Sprites.cellDefective);
+                this.setCellStatusIndicator(Sprites.cellDefective);
             }
         }
 
@@ -219,9 +221,14 @@ public class SmartBattery
         this.status = new ArrayList<Status>();
     }
 
-    public static SmartBattery parse(ArrayList<String> batteryData)
+    public static SmartBattery parse(SmartBattery battery, ArrayList<String> batteryData)
     {
-        SmartBattery battery = new SmartBattery();
+        if (battery == null)
+        {
+            battery = new SmartBattery();
+        }
+
+        battery.cellVoltages.clear();
 
         Map<String, String> dataMap = new HashMap<String, String>();
 
@@ -233,7 +240,6 @@ public class SmartBattery
 
                 if (s.length != 2)
                 {
-
                     logger.warning("Invalid Smart Battery Data. Unable to parse.");
                     return null;
                 }
@@ -283,6 +289,9 @@ public class SmartBattery
 
     private void initRuntimeVariables()
     {
+        ArrayList<Cell> cellList = new ArrayList<Cell>();
+        ArrayList<Status> statusList = new ArrayList<Status>();
+
         int idx = 1;
 
         for (double v : this.cellVoltages)
@@ -293,10 +302,11 @@ public class SmartBattery
             if (idx == 4 && v > 0 || idx != 4)
             {
                 cell.setVoltage(v);
-                this.cells.add(cell);
+                cellList.add(cell);
             }
             idx++;
         }
+        this.cells = cellList;
 
         double voltsPerCellMin = this.getDesignVoltage() / this.getAmountOfCells();
         double voltsPerCellMax = this.getChargeVoltage() / this.getAmountOfCells();
@@ -312,8 +322,10 @@ public class SmartBattery
 
         for (String marker : markers)
         {
-            this.status.add(Status.getStatus(marker));
+            statusList.add(Status.getStatus(marker));
         }
+        
+        this.status = statusList;
     }
 
     public ArrayList<Cell> getCells()
@@ -457,29 +469,39 @@ public class SmartBattery
 
         if (markers.contains(Status.OVERTEMP_ALARM) || markers.contains(Status.OVERCHARGE_ALARM))
         {
-            this.setStatusIndicator(SBSAT.Sprites.batteryWarning);
+            this.setStatusIndicator(Sprites.batteryWarning);
         }
         else if (this.getVoltage() == 0 && this.getSerial().isEmpty())
         {
-            this.setStatusIndicator(SBSAT.Sprites.batteryUnavailable);
+            this.setStatusIndicator(Sprites.batteryUnavailable);
         }
         else if (markers.contains(Status.CHARGED))
         {
-            this.setStatusIndicator(SBSAT.Sprites.batteryCharging);
+            this.setStatusIndicator(Sprites.batteryCharging);
         }
         else if (this.getCharge() >= -20)
         {
-            this.setStatusIndicator(SBSAT.Sprites.batteryEmpty);
+            this.setStatusIndicator(Sprites.batteryEmpty);
             // this.canRenderMeter = true;
         }
         else
         {
-            this.setStatusIndicator(SBSAT.Sprites.batteryDefective);
+            this.setStatusIndicator(Sprites.batteryDefective);
         }
     }
-    
+
     public static Logger logger()
     {
         return logger;
+    }
+
+    public BatteryFormData getFormData()
+    {
+        return formData;
+    }
+
+    public void setFormData(BatteryFormData formData)
+    {
+        this.formData = formData;
     }
 }
