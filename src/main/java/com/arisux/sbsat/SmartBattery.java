@@ -94,11 +94,11 @@ public class SmartBattery
             this.battery = battery;
             this.index = index;
             FormBatteryOverview f = FormBatteryOverview.instance();
-            this.labelIndex = new GuiText(f, f.FONT_SEGOEUI_PLAIN_14, "Cell " + String.valueOf(index));
-            this.labelVoltage = new GuiText(f, f.FONT_SEGOEUI_PLAIN_14, "0V");
-            this.labelVoltageMin = new GuiText(f, f.FONT_SEGOEUI_PLAIN_14, "0V");
-            this.labelVoltageMax = new GuiText(f, f.FONT_SEGOEUI_PLAIN_14, "0V");
-            this.labelCharge = new GuiText(f, f.FONT_SEGOEUI_PLAIN_20, "0%");
+            this.labelIndex = new GuiText(f, FormSBSATBase.FONT_SEGOEUI_PLAIN_14, "Cell " + String.valueOf(index));
+            this.labelVoltage = new GuiText(f, FormSBSATBase.FONT_SEGOEUI_PLAIN_14, "0V");
+            this.labelVoltageMin = new GuiText(f, FormSBSATBase.FONT_SEGOEUI_PLAIN_14, "0V");
+            this.labelVoltageMax = new GuiText(f, FormSBSATBase.FONT_SEGOEUI_PLAIN_14, "0V");
+            this.labelCharge = new GuiText(f, FormSBSATBase.FONT_SEGOEUI_PLAIN_20, "0%");
             this.labelCharge.setApplyShadow(true);
             this.labelCharge.setColor(COLOR_LABEL, COLOR_LABEL);
             this.cellStatusIndicator = Sprites.batteryEmpty;

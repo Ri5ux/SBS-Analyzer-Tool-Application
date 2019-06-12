@@ -1,0 +1,30 @@
+apply plugin : "application"
+
+repositories {
+    mavenCentral()
+}
+
+mainClassName = 'com.arisux.sbsat.SBSATMain'
+
+dependencies {
+    compile files("lib\\commons-lang3-3.2.1.jar")
+    compile files("lib\\jogg.jar")
+    compile files("lib\\jorbis.jar")
+    compile files("lib\\lwjgl.jar")
+    compile files("lib\\natives-linux.jar")
+    compile files("lib\\natives-mac.jar")
+    compile files("lib\\natives-windows.jar")
+    compile files("lib\\RXTXcomm.jar")
+    compile files("lib\\slick.jar")
+    compile files("lib\\slick-util.jar")
+    compile files("lib\\glx.jar")
+}
+
+jar {
+  manifest {
+    attributes(
+      "Class-Path": configurations.compile.collect { it.getName() }.join(' '),
+      'Main-Class': application.mainClassName
+    )
+  }
+}

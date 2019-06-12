@@ -9,6 +9,7 @@ import org.asx.glx.gui.elements.GuiText;
 import org.asx.glx.gui.forms.GuiForm;
 import org.asx.glx.opengl.Sprite;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
 
 import com.arisux.sbsat.SBSATMain.Sprites;
@@ -148,6 +149,11 @@ public class FormComPortSelection extends GuiForm
     public void render()
     {
         super.render();
+
+        GL11.glEnd();//Why does this resolve font rendering on initial load?
+
+//        GuiElement.renderColoredRect(0, 0, Display.getWidth(), headHeight, FormSBSATBase.HEADER_COLOR);
+//        GuiElement.renderColoredRect(0, headHeight - 1, Display.getWidth(), 1, FormSBSATBase.TRANSPARENT_HIGHLIGHT);
 
         if (SBSATMain.getUserInterface().getTicks() % (60 * 1) == 0)
         {

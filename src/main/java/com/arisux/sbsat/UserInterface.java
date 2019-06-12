@@ -155,7 +155,8 @@ public class UserInterface
             Display.update();
             Display.sync(60);
         }
-
+        
+        SBSATMain.terminate();
         Display.destroy();
         AL.destroy();
         System.exit(0);

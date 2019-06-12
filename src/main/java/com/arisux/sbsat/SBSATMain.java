@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 import org.asx.glx.gui.forms.GuiForm;
 import org.asx.glx.opengl.ResourceLocation;
@@ -17,15 +16,12 @@ import gnu.io.NoSuchPortException;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
-import sun.util.logging.PlatformLogger;
-import sun.util.logging.PlatformLogger.Level;
 
 public class SBSATMain implements SerialPortEventListener
 {
     private static final File    LWJGL_NATIVES = new File("lib/natives");
-    public static final File     RESOURCES     = new File("resources");
+    public static final File     RESOURCES     = new File("src/main/resources");
 
-    public static final Logger   logger        = Logger.getLogger("SBSAT");
     private static UserInterface ui;
     private static boolean       appRunning    = true;
     private static Thread        uiThread;
@@ -43,7 +39,6 @@ public class SBSATMain implements SerialPortEventListener
     private ArrayList<String>    buffer        = new ArrayList<String>();
     private boolean              continuousModeEnabled;
     private boolean              isConnected;
-    private SmartBattery         sbObject      = null;
     private AnalyzerDevice       connectedDevice;
 
     private static SBSATMain     instance;
@@ -85,12 +80,6 @@ public class SBSATMain implements SerialPortEventListener
     public void setConStartTimeStamp(long conStartTimeStamp)
     {
         this.conStartTimeStamp = conStartTimeStamp;
-    }
-
-    static
-    {
-        PlatformLogger logger = PlatformLogger.getLogger("java.util.prefs");
-        logger.setLevel(Level.SEVERE);
     }
 
     public static void main(String[] args)
@@ -164,35 +153,6 @@ public class SBSATMain implements SerialPortEventListener
         }
     }
 
-    public void parseBatteryData()
-    {
-        // FormBatteryOverview.instance().updateConsole(buffer.toString());
-
-        int idxStart = buffer.lastIndexOf("================================");
-        int idxEnd = buffer.size() - 1;
-
-        if (idxStart > 0)
-        {
-            ArrayList<String> batteryData = new ArrayList<String>();
-
-            for (int idxs = idxStart; idxs <= idxEnd; idxs++)
-            {
-                batteryData.add(buffer.get(idxs));
-            }
-
-            SmartBattery battery = SmartBattery.parse(batteryData);
-
-            if (battery != null)
-            {
-                FormBatteryOverview.instance().updateTextValues(battery);
-                sbObject = battery;
-                System.out.println("Received data from battery(" + sbObject.getSerial() + ")");
-
-                timeSinceLastRead = System.currentTimeMillis();
-            }
-        }
-    }
-
     public void onLineRead(String line)
     {
         try
@@ -257,17 +217,18 @@ public class SBSATMain implements SerialPortEventListener
                     }
                 }
 
-                if (line.equals("================================"))
-                {
-                    this.timeSinceLastRead = System.currentTimeMillis();
-                    this.parseBatteryData();
-                }
+                this.connectedDevice.handleLineData(line);
             }
         }
         catch (IOException e)
         {
             e.printStackTrace();
         }
+    }
+
+    public void heartbeat()
+    {
+        this.timeSinceLastRead = System.currentTimeMillis();
     }
 
     @Override
@@ -361,11 +322,6 @@ public class SBSATMain implements SerialPortEventListener
         return ui;
     }
 
-    public SmartBattery getSmartBattery()
-    {
-        return sbObject;
-    }
-
     public String getPortId()
     {
         return portId;
@@ -401,6 +357,16 @@ public class SBSATMain implements SerialPortEventListener
         return isConnected;
     }
 
+    public ArrayList<String> getBuffer()
+    {
+        return buffer;
+    }
+    
+    public AnalyzerDevice getConnectedDevice()
+    {
+        return connectedDevice;
+    }
+
     public synchronized static void setInfoText(String text)
     {
         GuiForm activeForm = getUserInterface().getPanel().getActiveForm();
@@ -421,5 +387,11 @@ public class SBSATMain implements SerialPortEventListener
             FormSBSATBase sbsatForm = (FormSBSATBase) activeForm;
             sbsatForm.getStatus().setText(text);
         }
+    }
+
+    public static void terminate()
+    {
+        instance().close();
+        appRunning = false;
     }
 }
