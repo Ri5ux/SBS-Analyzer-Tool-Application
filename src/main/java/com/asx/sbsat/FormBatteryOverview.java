@@ -244,6 +244,8 @@ public class FormBatteryOverview extends FormSBSATBase
                     GuiElement.renderColoredRect(cellPadding, consoleStartY + cellPadding, width - (cellPadding * 2), Display.getHeight() - consoleStartY - (cellPadding * 2), Color.black);
                     console.render(cellPadding * 2, consoleStartY);
                 }
+
+                SBSAT.setStatusText("");
             }
             else if (!SBSAT.instance().isConnected())
             {

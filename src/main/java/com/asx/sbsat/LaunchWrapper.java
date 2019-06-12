@@ -11,6 +11,9 @@ public class LaunchWrapper
 
     public static void main(String[] args)
     {
+        String version = System.getProperty("java.specification.version");
+        
+        System.out.println("Java Version: " + version);
         System.out.println("LWJGL Natives Path: " + LWJGL_NATIVES.getAbsolutePath());
         System.setProperty("org.lwjgl.librarypath", LWJGL_NATIVES.getAbsolutePath());
         System.out.println("RXTX Native Library Path: " + RXTX_NATIVE.getAbsolutePath());
@@ -30,7 +33,7 @@ public class LaunchWrapper
         System.out.println("\n" + Properties.NAME);
         System.out.println("Version " + Properties.VERSION);
 
-        new SBSAT();
+        new SBSAT(version);
 
         while (SBSAT.isAppRunning())
         {

@@ -157,6 +157,8 @@ public class FormComPortSelection extends GuiForm
 
         if (SBSAT.getUserInterface().getTicks() % (60 * 1) == 0)
         {
+            if (SBSAT.instance().isCompatibleWithJavaVersion())
+            {
             ArrayList<ComPortEntry> newComPortList = Util.getListOfComPorts();
 
             if (!areCOMPortListsIdentical(loadedComPorts, newComPortList))
@@ -169,6 +171,11 @@ public class FormComPortSelection extends GuiForm
                     GuiButtonComPort button = new GuiButtonComPort(this, -1000, -1000, 200, 25, com);
                     this.add(button);
                 }
+            }
+            }
+            else
+            {
+                this.textLoading.setText("Java 8 Required. Please install and try again.");
             }
         }
 
