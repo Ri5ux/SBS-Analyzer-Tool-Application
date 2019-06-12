@@ -21,11 +21,12 @@ public class SBSAT implements SerialPortEventListener
 {
     public static final File     RESOURCES = new File("src/main/resources");
 
-    private static SBSAT          instance;
+    private static SBSAT         instance;
     private static UserInterface ui;
     private static Thread        uiThread;
     private static boolean       appRunning;
 
+    private String               javaVersion;
     private SerialPort           serialPort;
     private volatile String      portId    = null;
     private long                 conStartTimeStamp;
@@ -41,10 +42,11 @@ public class SBSAT implements SerialPortEventListener
     private boolean              isConnected;
     private AnalyzerDevice       connectedDevice;
 
-    public SBSAT()
+    public SBSAT(String version)
     {
         instance = this;
-        
+        javaVersion = version;
+
         uiThread = new Thread() {
             @Override
             public void run()
@@ -99,7 +101,7 @@ public class SBSAT implements SerialPortEventListener
             // getUserInterface().getPanel().setForm(FormComPortSelection.instance());
         }
 
-        if (timeSinceLastRead > 0 && time - timeSinceLastRead > 5000)
+        if (isConnected && timeSinceLastRead > 0 && time - timeSinceLastRead > 5000)
         {
             SBSAT.instance().serialPort.close();
             this.isConnected = false;
@@ -383,5 +385,10 @@ public class SBSAT implements SerialPortEventListener
     {
         instance().close();
         appRunning = false;
+    }
+    
+    public boolean isCompatibleWithJavaVersion()
+    {
+        return this.javaVersion != null ?  this.javaVersion.contains("1.8") : false;
     }
 }
