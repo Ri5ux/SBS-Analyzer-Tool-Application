@@ -3,19 +3,20 @@ package com.arisux.sbsat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.asx.glx.gui.elements.GuiText;
 import org.asx.glx.opengl.Sprite;
 import org.newdawn.slick.Color;
 
 import com.arisux.sbsat.SBSATMain.Sprites;
-import com.sun.media.jfxmedia.logging.Logger;
 
 public class SmartBattery
 {
+    private static final Logger logger          = Logger.getLogger("SBSAT");
     private ArrayList<Cell>     cells           = new ArrayList<Cell>();
     private Sprite              statusIndicator = SBSATMain.Sprites.batteryUnspecified;
-//    private boolean             canRenderMeter;
+    // private boolean canRenderMeter;
 
     /** Parsed values **/
     protected String            manufacturer;
@@ -75,7 +76,7 @@ public class SmartBattery
         public static final Color COLOR_LABEL = new Color(0xFF007700);
         protected SmartBattery    battery;
 
-//        private boolean           canRenderMeter;
+        // private boolean canRenderMeter;
 
         private int               index;
         private double            voltage;
@@ -107,7 +108,7 @@ public class SmartBattery
         public void updateCellSprite()
         {
             ArrayList<Status> markers = this.getBattery().getStatusMarkers();
-//            this.canRenderMeter = false;
+            // this.canRenderMeter = false;
 
             if (markers.contains(Status.OVERTEMP_ALARM) || markers.contains(Status.OVERCHARGE_ALARM))
             {
@@ -120,7 +121,7 @@ public class SmartBattery
             else if (this.getChargePercent() >= -20)
             {
                 this.setCellStatusIndicator(SBSATMain.Sprites.cellEmpty);
-//                this.canRenderMeter = true;
+                // this.canRenderMeter = true;
             }
             else
             {
@@ -232,7 +233,8 @@ public class SmartBattery
 
                 if (s.length != 2)
                 {
-                    Logger.logMsg(Logger.ERROR, "Invalid Smart Battery Data. Unable to parse.");
+
+                    logger.warning("Invalid Smart Battery Data. Unable to parse.");
                     return null;
                 }
 
@@ -468,11 +470,16 @@ public class SmartBattery
         else if (this.getCharge() >= -20)
         {
             this.setStatusIndicator(SBSATMain.Sprites.batteryEmpty);
-//            this.canRenderMeter = true;
+            // this.canRenderMeter = true;
         }
         else
         {
             this.setStatusIndicator(SBSATMain.Sprites.batteryDefective);
         }
+    }
+    
+    public static Logger logger()
+    {
+        return logger;
     }
 }
