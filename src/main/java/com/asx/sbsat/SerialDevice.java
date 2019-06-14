@@ -74,7 +74,7 @@ public class SerialDevice implements SerialPortEventListener
     public SerialDevice()
     {
         this.model = "Generic";
-        this.mode = "simulate";
+        this.mode = "continuous";
         this.protocol = new ProtocolAT1R1();
         this.revision = 1;
         this.buffer = new ArrayList<String>();
