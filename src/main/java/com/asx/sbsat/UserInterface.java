@@ -3,7 +3,6 @@ package com.asx.sbsat;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -84,8 +83,8 @@ public class UserInterface
             Display.setDisplayMode(DASHBOARD);
 
             ByteBuffer[] list = new ByteBuffer[2];
-            list[0] = Sprite.toByteBuffer(ImageIO.read(new File(SBSAT.RESOURCES, "16.png")));
-            list[1] = Sprite.toByteBuffer(ImageIO.read(new File(SBSAT.RESOURCES, "32.png")));
+            list[0] = Sprite.toByteBuffer(ImageIO.read(SBSAT.class.getClassLoader().getResourceAsStream(SBSAT.RESOURCES.getLocation().getPath() + "/16.png")));
+            list[1] = Sprite.toByteBuffer(ImageIO.read(SBSAT.class.getClassLoader().getResourceAsStream(SBSAT.RESOURCES.getLocation().getPath() + "/32.png")));
             Display.setIcon(list);
 
             Display.create();
@@ -156,7 +155,7 @@ public class UserInterface
             Display.sync(60);
         }
 
-        SBSAT.terminate();
+        SBSAT.instance().terminate();
         Display.destroy();
         AL.destroy();
         System.exit(0);

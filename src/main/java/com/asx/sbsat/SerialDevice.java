@@ -210,7 +210,7 @@ public class SerialDevice implements SerialPortEventListener
         {
             System.err.println(e.toString());
             this.isConnected = false;
-            SBSAT.terminate();
+            SBSAT.instance().terminate();
         }
     }
 

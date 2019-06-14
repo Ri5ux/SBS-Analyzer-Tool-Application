@@ -1,19 +1,18 @@
 package com.asx.sbsat;
 
-import java.io.File;
-
 import org.asx.glx.gui.forms.GuiForm;
+import org.asx.glx.opengl.ResourceLocation;
 
 public class SBSAT
 {
-    public static final File     RESOURCES = new File("src/main/resources");
+    public static final ResourceLocation RESOURCES = new ResourceLocation("sprites");
 
-    private static SBSAT         instance;
-    private static UserInterface ui;
-    private static Thread        uiThread;
-    private static boolean       appRunning;
-    private String               javaVersion;
-    private SerialDevice         connectedDevice;
+    private static SBSAT                 instance;
+    private static UserInterface         ui;
+    private static Thread                uiThread;
+    private static boolean               appRunning;
+    private String                       javaVersion;
+    private SerialDevice                 connectedDevice;
 
     public SBSAT(String version)
     {
@@ -89,9 +88,13 @@ public class SBSAT
         return appRunning;
     }
 
-    public static void terminate()
+    public synchronized void terminate()
     {
-        instance().getConnectedDevice().close();
+        if (instance().getConnectedDevice() != null)
+        {
+            instance().getConnectedDevice().close();
+        }
+        
         appRunning = false;
     }
 
